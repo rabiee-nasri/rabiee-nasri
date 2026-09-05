@@ -104,7 +104,11 @@ def gitlab_all_days(user_id):
                 batch = []
             for ev in batch:
                 k = ev["created_at"][:10]
-                days[k] = days.get(k, 0) + 1
+                # A push is one event however many commits it carries. GitHub
+                # counts commits, so count them here too for a like-for-like bar.
+                pd = ev.get("push_data") or {}
+                n = pd.get("commit_count") or 1 if pd else 1
+                days[k] = days.get(k, 0) + n
             if len(batch) < 100:
                 break
             page += 1
@@ -134,7 +138,22 @@ def months_since(first_year):
     return out
 
 
+HISTORY = os.path.join(OUT_DIR, "history.json")
+
+
+def load_history():
+    try:
+        with open(HISTORY, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
 def collect():
+    """Fetch every account, then merge with the committed history so a day never
+    loses count: if a former employer revokes access, the events GitLab stops
+    returning stay in history.json and keep rendering."""
+    history = load_history()
     rows = []
     gitlab_authed = True
     for acc in ACCOUNTS:
@@ -142,6 +161,12 @@ def collect():
             days = github_all_days(acc["login"])
         else:
             days, gitlab_authed = gitlab_all_days(acc["id"])
+        key = f'{acc["kind"]}:{acc["login"]}'
+        merged = dict(history.get(key, {}))
+        for k, v in days.items():
+            merged[k] = max(merged.get(k, 0), v)
+        history[key] = dict(sorted(merged.items()))
+        days = merged
         by_month, by_year = {}, {}
         for k, v in days.items():
             if k < f"{FIRST_YEAR}-01-01":
@@ -149,6 +174,9 @@ def collect():
             by_month[month_key(k)] = by_month.get(month_key(k), 0) + v
             by_year[int(k[:4])] = by_year.get(int(k[:4]), 0) + v
         rows.append({**acc, "days": days, "by_month": by_month, "by_year": by_year})
+    os.makedirs(OUT_DIR, exist_ok=True)
+    with open(HISTORY, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=0, sort_keys=True)
     return rows, gitlab_authed
 
 
@@ -284,9 +312,9 @@ def render(theme, rows, gitlab_authed):
         v = sum(r["by_year"].get(yr, 0) for r in rows)
         text(f"{LEFT + label_w + i * col_w + col_w / 2:.0f}", ty, f"{v:,}" if v else "·", 12, 600, None, "middle")
     text(WIDTH - 16, ty, f"{grand:,}", 12, 700, None, "end")
-    if not gitlab_authed:
-        ty += 20
-        text(LEFT, ty, "GitLab: public-project events only in this render.", 11, 400, t["muted"])
+    ty += 20
+    text(LEFT, ty, "GitLab counts commits in pushes plus issues, merge requests and comments, the same basis GitHub uses."
+         + ("" if gitlab_authed else " Public projects only in this render."), 11, 400, t["muted"])
     height = ty + 20
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
            f'font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">',

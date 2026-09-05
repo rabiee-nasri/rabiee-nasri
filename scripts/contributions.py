@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
 FIRST_YEAR = 2020
@@ -88,9 +89,25 @@ def github_all_days(login):
 
 
 # ---------------------------------------------------------------- GitLab
+# GitLab projects that mirror GitHub repositories. Their commits are already
+# counted on GitHub, so pushes to them are skipped here to avoid double counting.
+GITLAB_MIRRORS = ["rabiee-nasri/profile_page"]
+
+
+def gitlab_project_ids(paths, headers):
+    ids = set()
+    for path in paths:
+        try:
+            ids.add(http_json(f"https://gitlab.com/api/v4/projects/{urllib.parse.quote(path, safe='')}", headers)["id"])
+        except (urllib.error.HTTPError, KeyError):
+            pass
+    return ids
+
+
 def gitlab_all_days(user_id):
     token = os.environ.get("GITLAB_TOKEN")
     headers = {"PRIVATE-TOKEN": token} if token else {}
+    skip = gitlab_project_ids(GITLAB_MIRRORS, headers)
     days = {}
     for y in range(FIRST_YEAR, TODAY.year + 1):
         page = 1
@@ -103,6 +120,8 @@ def gitlab_all_days(user_id):
                 print(f"gitlab events {y} page {page}: HTTP {e.code}", file=sys.stderr)
                 batch = []
             for ev in batch:
+                if ev.get("project_id") in skip:
+                    continue
                 k = ev["created_at"][:10]
                 # A push is one event however many commits it carries. GitHub
                 # counts commits, so count them here too for a like-for-like bar.

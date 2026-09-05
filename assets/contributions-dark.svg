@@ -3,7 +3,7 @@
 <text x="24" y="22" font-size="15" font-weight="600" fill="#e6edf3">Contributions across my accounts</text>
 <text x="24" y="40" fill="#9198a1">Last twelve months per active account, then totals by year. Counts only, no repository details. Updated 2026-09-05.</text>
 <text x="24" y="70" font-weight="600" fill="#e6edf3">GitHub · <a href="https://github.com/rabiee-nasri" fill="#e6edf3">rabiee-nasri</a><tspan fill="#9198a1" font-weight="400">  personal</tspan></text>
-<text x="766" y="70" text-anchor="end" fill="#9198a1">466 in the last year · 491 since 2021</text>
+<text x="766" y="70" text-anchor="end" fill="#9198a1">467 in the last year · 492 since 2021</text>
 <text x="38" y="96" font-size="10" fill="#9198a1">Sep</text>
 <text x="94" y="96" font-size="10" fill="#9198a1">Oct</text>
 <text x="150" y="96" font-size="10" fill="#9198a1">Nov</text>
@@ -1173,8 +1173,8 @@
 <text x="521" y="610" text-anchor="middle" fill="#e6edf3">1</text>
 <text x="571" y="610" text-anchor="middle" fill="#e6edf3">21</text>
 <text x="621" y="610" text-anchor="middle" fill="#e6edf3">5</text>
-<text x="671" y="610" text-anchor="middle" fill="#e6edf3">462</text>
-<text x="766" y="610" text-anchor="end" font-weight="600" fill="#e6edf3">491</text>
+<text x="671" y="610" text-anchor="middle" fill="#e6edf3">463</text>
+<text x="766" y="610" text-anchor="end" font-weight="600" fill="#e6edf3">492</text>
 <line x1="24" y1="617" x2="766" y2="617" stroke="#30363d"/>
 <text x="24" y="632" fill="#e6edf3"><tspan font-weight="600">GitHub · RabieeNasri</tspan><tspan fill="#9198a1">  Akkodis work account</tspan></text>
 <text x="421" y="632" text-anchor="middle" fill="#9198a1"></text>

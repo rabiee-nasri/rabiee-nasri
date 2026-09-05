@@ -33,7 +33,7 @@ ACCOUNTS = [
      "color": {"light": "#0f766e", "dark": "#2dd4bf"}, "heatmap": True},
     {"kind": "github", "login": "rabiee-nasri", "label": "GitHub",
      "note": "personal", "url": "https://github.com/rabiee-nasri",
-     "color": {"light": "#4fb3a4", "dark": "#7fe0d0"}},
+     "color": {"light": "#2f6fdd", "dark": "#79a8ff"}},
 ]
 
 THEMES = {

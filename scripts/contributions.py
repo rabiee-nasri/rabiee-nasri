@@ -25,10 +25,10 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 ACCOUNTS = [
     {"kind": "gitlab", "login": "rabiee-nasri", "id": 9038451, "label": "GitLab",
      "note": "personal projects and Automax", "url": "https://gitlab.com/rabiee-nasri",
-     "color": {"light": "#e07b39", "dark": "#f0a35e"}},
+     "color": {"light": "#d9a300", "dark": "#f2c94c"}},
     {"kind": "github", "login": "Mohammad-Nasri-Developer", "label": "GitHub",
      "note": "Smart Science Gate", "url": "https://github.com/Mohammad-Nasri-Developer",
-     "color": {"light": "#7c5cd6", "dark": "#a48cf0"}},
+     "color": {"light": "#d13b3b", "dark": "#f47272"}},
     {"kind": "github", "login": "RabieeNasri", "label": "GitHub",
      "note": "Akkodis", "url": "https://github.com/RabieeNasri",
      "color": {"light": "#0f766e", "dark": "#2dd4bf"}, "heatmap": True},

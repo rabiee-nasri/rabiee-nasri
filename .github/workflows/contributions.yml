@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: contributions
+  cancel-in-progress: false
+
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -31,4 +35,5 @@ jobs:
           git add assets
           git diff --cached --quiet && exit 0
           git commit -m "Update contribution graphics ($(date -u +%F))"
+          git pull --rebase origin main
           git push

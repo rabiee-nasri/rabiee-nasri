@@ -19,9 +19,9 @@ Most of my production work is closed-source client work: a large-scale retail an
 
 ### Contributions across accounts
 
-My commits live in three places: this account, my Akkodis work account [@RabieeNasri](https://github.com/RabieeNasri) (client work, private repositories), and [GitLab](https://gitlab.com/rabiee-nasri), where my personal projects lived from 2020 to 2025. The graphic below is regenerated nightly by [a small script in this repository](scripts/contributions.py) from the public contribution calendars. Counts only; no repository details are read or shown.
+My commits live in more than one place: this account, my Akkodis work account [@RabieeNasri](https://github.com/RabieeNasri) (client work, private repositories), my former Smart Science Gate work account [@Mohammad-Nasri-Developer](https://github.com/Mohammad-Nasri-Developer) (2022 to 2024), and [GitLab](https://gitlab.com/rabiee-nasri), where my personal projects lived from 2020 to 2025. The graphic below is regenerated nightly by [a small script in this repository](scripts/contributions.py) from the public contribution calendars: the last twelve months for each active account, then totals by year. Counts only; no repository details are read or shown.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">
-  <img alt="Contribution heatmaps for the last twelve months across three accounts: GitHub rabiee-nasri, GitHub RabieeNasri (Akkodis), and GitLab rabiee-nasri" src="assets/contributions-light.svg">
+  <img alt="Contribution heatmaps for the last twelve months on GitHub rabiee-nasri, GitHub RabieeNasri (Akkodis) and GitLab rabiee-nasri, followed by a table of yearly totals since 2021 that also includes the former Smart Science Gate work account" src="assets/contributions-light.svg">
 </picture>

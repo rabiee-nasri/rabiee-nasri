@@ -16,11 +16,19 @@ ACCOUNTS = [
     {"kind": "github", "login": "rabiee-nasri", "label": "GitHub",
      "note": "personal", "url": "https://github.com/rabiee-nasri"},
     {"kind": "github", "login": "RabieeNasri", "label": "GitHub",
-     "note": "Akkodis work account, private repositories",
+     "note": "Akkodis work account",
      "url": "https://github.com/RabieeNasri"},
     {"kind": "gitlab", "login": "rabiee-nasri", "label": "GitLab",
-     "note": "personal projects, 2020 onwards", "url": "https://gitlab.com/rabiee-nasri"},
+     "note": "personal projects", "url": "https://gitlab.com/rabiee-nasri"},
 ]
+# Accounts that only appear in the by-year table (no activity in the last year).
+TABLE_ONLY = [
+    {"kind": "github", "login": "Mohammad-Nasri-Developer", "label": "GitHub",
+     "note": "Smart Science Gate work account",
+     "url": "https://github.com/Mohammad-Nasri-Developer"},
+]
+FIRST_YEAR = 2021
+GITLAB_USER_ID = 9038451
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 TODAY = dt.date.today()
 UA = "rabiee-nasri profile README contributions script"
@@ -66,13 +74,38 @@ def github_calendar(login, since, until):
     return days, coll["contributionCalendar"]["totalContributions"], user["createdAt"][:4]
 
 
-def github_total_since(login, first_year):
-    total = 0
+
+
+def github_by_year(login, first_year):
+    out = {}
     for y in range(int(first_year), TODAY.year + 1):
         start, end = dt.date(y, 1, 1), min(dt.date(y, 12, 31), TODAY)
         _, t, _ = github_calendar(login, start, end)
-        total += t
-    return total
+        out[y] = t
+    return out
+
+
+def gitlab_by_year(user_id):
+    """Yearly event counts. Anonymous calls see public-project events only;
+    with GITLAB_TOKEN (read_api) the owner's private-project events count too."""
+    token = os.environ.get("GITLAB_TOKEN")
+    headers = {"PRIVATE-TOKEN": token} if token else {}
+    out = {}
+    for y in range(FIRST_YEAR, TODAY.year + 1):
+        total, page = 0, 1
+        while True:
+            url = (f"https://gitlab.com/api/v4/users/{user_id}/events?after={y - 1}-12-31"
+                   f"&before={y + 1}-01-01&per_page=100&page={page}")
+            try:
+                batch = http_json(url, headers)
+            except urllib.error.HTTPError:
+                batch = []
+            total += len(batch)
+            if len(batch) < 100:
+                break
+            page += 1
+        out[y] = total
+    return out, bool(token)
 
 
 def gitlab_calendar(username):
@@ -97,15 +130,31 @@ def collect():
     for acc in ACCOUNTS:
         if acc["kind"] == "github":
             days, total, created = github_calendar(acc["login"], start, end)
-            since_total = github_total_since(acc["login"], created)
-            since_label = f"{since_total:,} since {created}"
+            by_year = github_by_year(acc["login"], max(FIRST_YEAR, int(created)))
+            since_label = f"{sum(by_year.values()):,} since {max(FIRST_YEAR, int(created))}"
+            authed = True
         else:
             days = gitlab_calendar(acc["login"])
             days = {k: v for k, v in days.items() if start.isoformat() <= k <= end.isoformat()}
             total = sum(days.values())
-            since_label = "public calendar covers the last twelve months only"
-        rows.append({**acc, "days": days, "total": total, "since": since_label})
-    return start, end, rows
+            by_year, authed = gitlab_by_year(GITLAB_USER_ID)
+            # The public calendar includes private contributions once the profile
+            # setting is on, but only for the last twelve months. Use it where it
+            # says more than the anonymous events API does.
+            cal_by_year = {}
+            for k, v in days.items():
+                cal_by_year[int(k[:4])] = cal_by_year.get(int(k[:4]), 0) + v
+            for y, v in cal_by_year.items():
+                by_year[y] = max(by_year.get(y, 0), v)
+            since_label = "public events only" if not authed else f"{sum(by_year.values()):,} since {FIRST_YEAR}"
+        rows.append({**acc, "days": days, "total": total, "since": since_label,
+                     "by_year": by_year, "authed": authed})
+    table = []
+    for acc in TABLE_ONLY:
+        _, _, created = github_calendar(acc["login"], start, end)
+        by_year = github_by_year(acc["login"], max(FIRST_YEAR, int(created)))
+        table.append({**acc, "by_year": by_year, "authed": True})
+    return start, end, rows, table
 
 
 THEMES = {
@@ -123,21 +172,24 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def render(theme_name, start, end, rows):
+def render(theme_name, start, end, rows, table):
     t = THEMES[theme_name]
     step = CELL + GAP
     cols = 53
     width = LEFT + cols * step + 16
     grid_h = 7 * step
     row_h = ROW_HEADER + 14 + grid_h + ROW_GAP
-    height = TOP + len(rows) * row_h + 28
+    years = list(range(FIRST_YEAR, TODAY.year + 1))
+    table_rows = rows + table
+    table_h = 34 + 22 * (len(table_rows) + 1) + 20
+    height = TOP + len(rows) * row_h + table_h + 16
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
            f'font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">']
-    out.append(f'<title>Contributions in the last twelve months across three accounts</title>')
+    out.append(f'<title>Contributions across my accounts: heatmaps for the last twelve months and totals by year</title>')
     out.append(f'<text x="{LEFT}" y="22" font-size="15" font-weight="600" fill="{t["text"]}">'
-               f'Contributions, last twelve months, across three accounts</text>')
-    out.append(f'<text x="{LEFT}" y="40" fill="{t["muted"]}">Counts only. Client repositories are private and no repository '
-               f'details are read or shown. Updated {TODAY.isoformat()}.</text>')
+               f'Contributions across my accounts</text>')
+    out.append(f'<text x="{LEFT}" y="40" fill="{t["muted"]}">Last twelve months per active account, then totals by year. Counts only, no repository details. '
+               f'Updated {TODAY.isoformat()}.</text>')
     y0 = TOP
     for row in rows:
         days = row["days"]
@@ -182,22 +234,48 @@ def render(theme_name, start, end, rows):
             out.append(f'<text x="{LEFT}" y="{gy + grid_h + 14}" font-size="11" fill="{t["muted"]}">'
                        f'No public calendar data yet: GitLab hides private contributions until the profile setting is on.</text>')
         y0 += row_h
+    # by-year table
+    out.append(f'<text x="{LEFT}" y="{y0 + 14}" font-size="14" font-weight="600" fill="{t["text"]}">By year</text>')
+    out.append(f'<text x="{LEFT + 74}" y="{y0 + 14}" fill="{t["muted"]}">contributions per account since {FIRST_YEAR}</text>')
+    ty = y0 + 40
+    label_w = 372
+    col_w = (width - 16 - LEFT - label_w - 70) / len(years)
+    out.append(f'<line x1="{LEFT}" y1="{ty + 6}" x2="{width - 16}" y2="{ty + 6}" stroke="{t["rule"]}"/>')
+    for i, y in enumerate(years):
+        out.append(f'<text x="{LEFT + label_w + i * col_w + col_w / 2:.0f}" y="{ty}" text-anchor="middle" '
+                   f'font-weight="600" fill="{t["muted"]}">{y}</text>')
+    out.append(f'<text x="{width - 16}" y="{ty}" text-anchor="end" font-weight="600" fill="{t["muted"]}">Total</text>')
+    for r in table_rows:
+        ty += 22
+        out.append(f'<text x="{LEFT}" y="{ty}" fill="{t["text"]}"><tspan font-weight="600">{esc(r["label"])} · {esc(r["login"])}</tspan>'
+                   f'<tspan fill="{t["muted"]}">  {esc(r["note"])}</tspan></text>')
+        for i, y in enumerate(years):
+            v = r["by_year"].get(y)
+            txt = "" if v is None else (f"{v:,}" if v else "·")
+            out.append(f'<text x="{LEFT + label_w + i * col_w + col_w / 2:.0f}" y="{ty}" text-anchor="middle" '
+                       f'fill="{t["text"] if v else t["muted"]}">{txt}</text>')
+        total = sum(r["by_year"].values())
+        out.append(f'<text x="{width - 16}" y="{ty}" text-anchor="end" font-weight="600" fill="{t["text"]}">{total:,}</text>')
+        out.append(f'<line x1="{LEFT}" y1="{ty + 7}" x2="{width - 16}" y2="{ty + 7}" stroke="{t["rule"]}"/>')
+    if any(r["kind"] == "gitlab" and not r["authed"] for r in table_rows):
+        out.append(f'<text x="{LEFT}" y="{ty + 24}" font-size="11" fill="{t["muted"]}">GitLab: the last twelve months include private projects; earlier years count public events only.</text>')
     out.append("</svg>")
     return "\n".join(out)
 
 
 def main():
-    start, end, rows = collect()
+    start, end, rows, table = collect()
     os.makedirs(OUT_DIR, exist_ok=True)
     for name in THEMES:
         with open(os.path.join(OUT_DIR, f"contributions-{name}.svg"), "w", encoding="utf-8") as f:
-            f.write(render(name, start, end, rows))
+            f.write(render(name, start, end, rows, table))
     snapshot = {"updated": TODAY.isoformat(), "window": [start.isoformat(), end.isoformat()],
-                "accounts": [{"label": r["label"], "login": r["login"], "last_year": r["total"], "since": r["since"]} for r in rows]}
+                "accounts": [{"label": r["label"], "login": r["login"], "last_year": r.get("total"),
+                              "by_year": r["by_year"]} for r in rows + table]}
     with open(os.path.join(OUT_DIR, "contributions.json"), "w", encoding="utf-8") as f:
         json.dump(snapshot, f, indent=2)
-    for r in rows:
-        print(f'{r["label"]:<6} {r["login"]:<14} last year={r["total"]:>5}  {r["since"]}')
+    for r in rows + table:
+        print(f'{r["label"]:<6} {r["login"]:<26} by year={r["by_year"]}')
 
 
 if __name__ == "__main__":

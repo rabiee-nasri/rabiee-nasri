@@ -29,9 +29,14 @@ ACCOUNTS = [
     {"kind": "github", "login": "Mohammad-Nasri-Developer", "label": "GitHub",
      "note": "Smart Science Gate", "url": "https://github.com/Mohammad-Nasri-Developer",
      "color": {"light": "#d13b3b", "dark": "#f47272"}},
-    {"kind": "github", "login": "RabieeNasri", "label": "GitHub",
+    {"kind": "github", "login": "RabieeNasri", "label": "GitHub and Bitbucket",
      "note": "Akkodis", "url": "https://github.com/RabieeNasri",
-     "color": {"light": "#0f766e", "dark": "#2dd4bf"}, "heatmap": True},
+     "color": {"light": "#0f766e", "dark": "#2dd4bf"}, "heatmap": True,
+     # Kidjo moved to Bitbucket in Aug 2026. Bitbucket has no public activity
+     # API, so its commits are counted on the work laptop by
+     # scripts/local-commits.sh and merged into history.json under this key
+     # through the add-local-counts workflow. Counts only.
+     "extra_history": ["bitbucket:akkodis"]},
     {"kind": "github", "login": "rabiee-nasri", "label": "GitHub",
      "note": "personal", "url": "https://github.com/rabiee-nasri",
      "color": {"light": "#2f6fdd", "dark": "#79a8ff"}},
@@ -186,7 +191,12 @@ def collect():
         for k, v in days.items():
             merged[k] = max(merged.get(k, 0), v)
         history[key] = dict(sorted(merged.items()))
-        days = merged
+        days = dict(merged)
+        # Counts that arrive from local clones (no public API) are kept under
+        # their own key in history.json and added to this account's days.
+        for extra in acc.get("extra_history", []):
+            for k, v in history.get(extra, {}).items():
+                days[k] = days.get(k, 0) + v
         by_month, by_year = {}, {}
         for k, v in days.items():
             if k < f"{FIRST_YEAR}-01-01":
@@ -281,7 +291,7 @@ def render(theme, rows, gitlab_authed):
     end = TODAY
     start = end - dt.timedelta(days=(end.weekday() + 1) % 7) - dt.timedelta(weeks=52)
     last_year = sum(v for k, v in hm["days"].items() if start.isoformat() <= k <= end.isoformat())
-    text(LEFT, y + 14, f'{esc(hm["label"])} · {esc(hm["login"])}<tspan fill="{t["muted"]}" font-weight="400">  {esc(hm["note"])} work account, last twelve months, day by day</tspan>', 12, 600)
+    text(LEFT, y + 14, f'{esc(hm["note"])} work, day by day<tspan fill="{t["muted"]}" font-weight="400">  GitHub {esc(hm["login"])} and Bitbucket, last twelve months</tspan>', 12, 600)
     text(WIDTH - 16, y + 14, f"{last_year:,} in the last year", 12, 400, t["muted"], "end")
     gy = y + 44
     prev = None

@@ -1,0 +1,61 @@
+name: add-local-counts
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Source key, for example bitbucket:akkodis"
+        required: true
+        default: "bitbucket:akkodis"
+      counts:
+        description: "JSON from scripts/local-commits.sh, {\"YYYY-MM-DD\": n, ...}"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: contributions
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Merge counts into history.json
+        env:
+          SOURCE: ${{ inputs.source }}
+          COUNTS: ${{ inputs.counts }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, re
+          src = os.environ["SOURCE"].strip()
+          assert re.fullmatch(r"[a-z]+:[A-Za-z0-9._-]+", src), "source must look like platform:name"
+          new = json.loads(os.environ["COUNTS"])
+          assert all(re.fullmatch(r"\d{4}-\d{2}-\d{2}", k) and isinstance(v, int) and v >= 0 for k, v in new.items()), "bad counts"
+          p = "assets/history.json"
+          h = json.load(open(p))
+          days = h.setdefault(src, {})
+          for k, v in new.items():
+              days[k] = max(days.get(k, 0), v)
+          h[src] = dict(sorted(days.items()))
+          json.dump(h, open(p, "w"), indent=0, sort_keys=True)
+          print(f"{src}: {len(new)} days merged, {sum(new.values())} commits, now {sum(days.values())} total")
+          EOF
+      - run: python scripts/contributions.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          git diff --cached --quiet && exit 0
+          git commit -m "Add local counts for ${{ inputs.source }} ($(date -u +%F))"
+          git pull --rebase
+          git push

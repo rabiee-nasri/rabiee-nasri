@@ -337,7 +337,7 @@ def render(theme, rows, gitlab_authed):
          + ("" if gitlab_authed else " Public projects only in this render."), 11, 400, t["muted"])
     ty += 16
     text(LEFT, ty, "2020: commits in repositories moved from an earlier GitHub account. "
-         "Personal GitLab projects were migrated to GitHub with full history and count there.", 11, 400, t["muted"])
+         "Personal GitLab projects now live on GitHub and count there.", 11, 400, t["muted"])
     height = ty + 20
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
            f'font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">',

@@ -336,8 +336,8 @@ def render(theme, rows, gitlab_authed):
     text(LEFT, ty, "GitLab counts commits in pushes plus issues, merge requests and comments, the same basis GitHub uses."
          + ("" if gitlab_authed else " Public projects only in this render."), 11, 400, t["muted"])
     ty += 16
-    text(LEFT, ty, "2020: commits in repositories moved from an earlier GitHub account, counted from git history. "
-         "Personal GitLab projects (2021 to 2025) were migrated to GitHub with full history and count there.", 11, 400, t["muted"])
+    text(LEFT, ty, "2020: commits in repositories moved from an earlier GitHub account. "
+         "Personal GitLab projects were migrated to GitHub with full history and count there.", 11, 400, t["muted"])
     height = ty + 20
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
            f'font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">',

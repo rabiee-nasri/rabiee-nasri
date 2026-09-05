@@ -252,11 +252,17 @@ def render(theme, rows, gitlab_authed):
             cur -= h
             out.append(f'<rect x="{x:.1f}" y="{cur:.1f}" width="{bar_w:.1f}" height="{h:.1f}" fill="{r["color"][theme]}"/>')
     out.append(f'<line x1="{plot_left}" y1="{base_y}" x2="{plot_right}" y2="{base_y}" stroke="{t["rule"]}"/>')
-    for i, m in enumerate(months):
-        if m.endswith("-01"):
-            x = plot_left + i * slot
-            out.append(f'<line x1="{x:.1f}" y1="{base_y}" x2="{x:.1f}" y2="{base_y + 5}" stroke="{t["rule"]}"/>')
-            text(x + 3, base_y + 16, m[:4], 11, 600, t["muted"])
+    # Year bands: a faint divider at every January, the label centred under the
+    # months that year actually has, so two bars in late 2020 read as 2020.
+    top_y = base_y - chart_h - 6
+    year_starts = [i for i, m in enumerate(months) if m.endswith("-01")]
+    for i in year_starts[1:]:
+        x = plot_left + i * slot - 1
+        out.append(f'<line x1="{x:.1f}" y1="{top_y}" x2="{x:.1f}" y2="{base_y + 6}" stroke="{t["rule"]}"/>')
+    bounds = year_starts + [len(months)]
+    for a, b in zip(bounds, bounds[1:]):
+        cx = plot_left + (a + b) / 2 * slot
+        text(f"{cx:.1f}", base_y + 17, months[a][:4], 11, 600, t["muted"], "middle")
     # legend
     ly = base_y + 40
     for i, r in enumerate(reversed(rows)):

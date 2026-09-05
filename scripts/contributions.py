@@ -24,7 +24,7 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 # Order is stacking order (bottom to top) and legend order.
 ACCOUNTS = [
     {"kind": "gitlab", "login": "rabiee-nasri", "id": 9038451, "label": "GitLab",
-     "note": "personal projects and Automax", "url": "https://gitlab.com/rabiee-nasri",
+     "note": "Automax and client projects", "url": "https://gitlab.com/rabiee-nasri",
      "color": {"light": "#d9a300", "dark": "#f2c94c"}},
     {"kind": "github", "login": "Mohammad-Nasri-Developer", "label": "GitHub",
      "note": "Smart Science Gate", "url": "https://github.com/Mohammad-Nasri-Developer",
@@ -89,25 +89,34 @@ def github_all_days(login):
 
 
 # ---------------------------------------------------------------- GitLab
-# GitLab projects that mirror GitHub repositories. Their commits are already
-# counted on GitHub, so pushes to them are skipped here to avoid double counting.
-GITLAB_MIRRORS = ["rabiee-nasri/profile_page"]
+# Every project in the owner's own GitLab namespace was migrated to GitHub on
+# 2026-09-05 with full history, so GitHub counts those commits. GitLab keeps
+# counting only projects owned by others that he contributes to (Automax and
+# client work), which avoids counting the same commit twice.
+GITLAB_SKIP_NAMESPACE = "rabiee-nasri/"
 
 
-def gitlab_project_ids(paths, headers):
+def gitlab_skipped_project_ids(headers):
     ids = set()
-    for path in paths:
+    page = 1
+    while True:
         try:
-            ids.add(http_json(f"https://gitlab.com/api/v4/projects/{urllib.parse.quote(path, safe='')}", headers)["id"])
-        except (urllib.error.HTTPError, KeyError):
-            pass
+            batch = http_json(f"https://gitlab.com/api/v4/projects?membership=true&simple=true&per_page=100&page={page}", headers)
+        except urllib.error.HTTPError:
+            break
+        for pr in batch:
+            if pr.get("path_with_namespace", "").startswith(GITLAB_SKIP_NAMESPACE):
+                ids.add(pr["id"])
+        if len(batch) < 100:
+            break
+        page += 1
     return ids
 
 
 def gitlab_all_days(user_id):
     token = os.environ.get("GITLAB_TOKEN")
     headers = {"PRIVATE-TOKEN": token} if token else {}
-    skip = gitlab_project_ids(GITLAB_MIRRORS, headers)
+    skip = gitlab_skipped_project_ids(headers)
     days = {}
     for y in range(FIRST_YEAR, TODAY.year + 1):
         page = 1
@@ -131,14 +140,6 @@ def gitlab_all_days(user_id):
             if len(batch) < 100:
                 break
             page += 1
-    # The public calendar (last twelve months) includes private contributions when
-    # the profile setting is on; keep whichever count is higher per day.
-    try:
-        cal = http_json("https://gitlab.com/users/rabiee-nasri/calendar.json")
-    except urllib.error.HTTPError:
-        cal = {}
-    for k, v in cal.items():
-        days[k] = max(days.get(k, 0), int(v))
     return days, bool(token)
 
 
@@ -218,7 +219,7 @@ def render(theme, rows, gitlab_authed):
                    f'fill="{fill or t["text"]}">{s}</text>')
 
     # ---- header
-    text(LEFT, 22, "Seven years of contributions, four accounts", 15, 600)
+    text(LEFT, 22, "Contributions since 2020, four accounts", 15, 600)
     text(LEFT, 40, f"Monthly since {FIRST_YEAR}, square-root scale so early years stay visible. Counts only, no repository details. Updated {TODAY.isoformat()}.", 12, 400, t["muted"])
     y = 62
 
@@ -334,6 +335,9 @@ def render(theme, rows, gitlab_authed):
     ty += 20
     text(LEFT, ty, "GitLab counts commits in pushes plus issues, merge requests and comments, the same basis GitHub uses."
          + ("" if gitlab_authed else " Public projects only in this render."), 11, 400, t["muted"])
+    ty += 16
+    text(LEFT, ty, "2020: commits in repositories moved from an earlier GitHub account, counted from git history. "
+         "Personal GitLab projects (2021 to 2025) were migrated to GitHub with full history and count there.", 11, 400, t["muted"])
     height = ty + 20
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
            f'font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">',

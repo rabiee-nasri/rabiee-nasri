@@ -19,7 +19,7 @@ Most of my production work is closed-source client work: a large-scale retail an
 
 ### Contributions across accounts
 
-Client work is committed from my Akkodis account, [@RabieeNasri](https://github.com/RabieeNasri), in private repositories. My earlier work account, [@Mohammad-Nasri-Developer](https://github.com/Mohammad-Nasri-Developer), covers Smart Science Gate, 2022 to 2024. [GitLab](https://gitlab.com/rabiee-nasri) holds my personal projects since 2021 and my Automax work, October 2024 to July 2025. Counts only; the client repositories stay private.
+Client work is committed from my Akkodis account, [@RabieeNasri](https://github.com/RabieeNasri), in private repositories. My earlier work account, [@Mohammad-Nasri-Developer](https://github.com/Mohammad-Nasri-Developer), covers Smart Science Gate, 2022 to 2024. My Automax work, October 2024 to July 2025, is on [GitLab](https://gitlab.com/rabiee-nasri); my personal projects from 2021 to 2025 started there and now live here as private repositories with their full history. Counts only; the client repositories stay private.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">

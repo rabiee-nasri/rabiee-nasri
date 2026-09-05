@@ -20,7 +20,7 @@
       }
     },
     {
-      "label": "GitHub",
+      "label": "GitHub and Bitbucket",
       "login": "RabieeNasri",
       "by_year": {
         "2025": 202,
@@ -37,7 +37,7 @@
         "2023": 31,
         "2024": 32,
         "2025": 5,
-        "2026": 521
+        "2026": 532
       }
     }
   ]

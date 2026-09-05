@@ -19,7 +19,7 @@ Most of my production work is closed-source client work: a large-scale retail an
 
 ### Contributions across accounts
 
-My commits live in more than one place: this account, my Akkodis work account [@RabieeNasri](https://github.com/RabieeNasri) (client work, private repositories), my former Smart Science Gate work account [@Mohammad-Nasri-Developer](https://github.com/Mohammad-Nasri-Developer) (2022 to 2024), and [GitLab](https://gitlab.com/rabiee-nasri), where my personal projects lived from 2020 to 2025. The graphic below is regenerated nightly by [a small script in this repository](scripts/contributions.py) from the public contribution calendars: the last twelve months for each active account, then totals by year. Counts only; no repository details are read or shown.
+Client work is committed from my Akkodis account, [@RabieeNasri](https://github.com/RabieeNasri), in private repositories. My earlier work account, [@Mohammad-Nasri-Developer](https://github.com/Mohammad-Nasri-Developer), covers Smart Science Gate, 2022 to 2024. Personal projects lived on [GitLab](https://gitlab.com/rabiee-nasri) from 2020 to 2025. Counts only; the client repositories stay private.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">

@@ -1,0 +1,14 @@
+name: gitlab-inventory
+on:
+  workflow_dispatch:
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -sS -H "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects?membership=true&per_page=100&order_by=last_activity_at&simple=true" \
+          | python3 -c 'import sys,json
+          for p in json.load(sys.stdin):
+              print(f"{p[\"path_with_namespace\"]:<55} {p[\"visibility\"]:<8} created={p[\"created_at\"][:10]} last={p[\"last_activity_at\"][:10]} default={p.get(\"default_branch\")}")'
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}

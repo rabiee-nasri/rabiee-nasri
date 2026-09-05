@@ -24,7 +24,7 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 # Order is stacking order (bottom to top) and legend order.
 ACCOUNTS = [
     {"kind": "gitlab", "login": "rabiee-nasri", "id": 9038451, "label": "GitLab",
-     "note": "personal projects", "url": "https://gitlab.com/rabiee-nasri",
+     "note": "personal projects and Automax", "url": "https://gitlab.com/rabiee-nasri",
      "color": {"light": "#e07b39", "dark": "#f0a35e"}},
     {"kind": "github", "login": "Mohammad-Nasri-Developer", "label": "GitHub",
      "note": "Smart Science Gate", "url": "https://github.com/Mohammad-Nasri-Developer",

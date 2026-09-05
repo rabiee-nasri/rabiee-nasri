@@ -94,7 +94,7 @@
 <rect x="747.9" y="219.1" width="7.0" height="32.9" fill="#2dd4bf"/>
 <rect x="747.9" y="82.0" width="7.0" height="137.1" fill="#79a8ff"/>
 <rect x="757.0" y="251.1" width="7.0" height="0.9" fill="#2dd4bf"/>
-<rect x="757.0" y="147.2" width="7.0" height="103.9" fill="#79a8ff"/>
+<rect x="757.0" y="145.4" width="7.0" height="105.7" fill="#79a8ff"/>
 <line x1="34" y1="252" x2="766" y2="252" stroke="#30363d"/>
 <line x1="34.0" y1="252" x2="34.0" y2="257" stroke="#30363d"/>
 <text x="37.0" y="268" font-size="11" font-weight="600" text-anchor="start" fill="#9198a1">2020</text>
@@ -522,8 +522,8 @@
 <text x="545" y="574" font-size="12" font-weight="400" text-anchor="middle" fill="#e6edf3">31</text>
 <text x="588" y="574" font-size="12" font-weight="400" text-anchor="middle" fill="#e6edf3">27</text>
 <text x="631" y="574" font-size="12" font-weight="400" text-anchor="middle" fill="#e6edf3">5</text>
-<text x="674" y="574" font-size="12" font-weight="400" text-anchor="middle" fill="#e6edf3">515</text>
-<text x="766" y="574" font-size="12" font-weight="600" text-anchor="end" fill="#e6edf3">895</text>
+<text x="674" y="574" font-size="12" font-weight="400" text-anchor="middle" fill="#e6edf3">519</text>
+<text x="766" y="574" font-size="12" font-weight="600" text-anchor="end" fill="#e6edf3">899</text>
 <line x1="34" y1="581" x2="766" y2="581" stroke="#30363d"/>
 <rect x="34" y="586" width="10" height="10" rx="2" fill="#2dd4bf"/>
 <text x="49" y="596" font-size="12" font-weight="400" text-anchor="start" fill="#e6edf3"><tspan font-weight="600">GitHub · RabieeNasri</tspan><tspan fill="#9198a1">  Akkodis</tspan></text>
@@ -565,8 +565,8 @@
 <text x="545" y="662" font-size="12" font-weight="600" text-anchor="middle" fill="#e6edf3">183</text>
 <text x="588" y="662" font-size="12" font-weight="600" text-anchor="middle" fill="#e6edf3">210</text>
 <text x="631" y="662" font-size="12" font-weight="600" text-anchor="middle" fill="#e6edf3">310</text>
-<text x="674" y="662" font-size="12" font-weight="600" text-anchor="middle" fill="#e6edf3">1,180</text>
-<text x="766" y="662" font-size="12" font-weight="700" text-anchor="end" fill="#e6edf3">2,245</text>
+<text x="674" y="662" font-size="12" font-weight="600" text-anchor="middle" fill="#e6edf3">1,184</text>
+<text x="766" y="662" font-size="12" font-weight="700" text-anchor="end" fill="#e6edf3">2,249</text>
 <text x="34" y="682" font-size="11" font-weight="400" text-anchor="start" fill="#9198a1">GitLab counts commits in pushes plus issues, merge requests and comments, the same basis GitHub uses.</text>
-<text x="34" y="698" font-size="11" font-weight="400" text-anchor="start" fill="#9198a1">2020: commits in repositories moved from an earlier GitHub account, counted from git history. Personal GitLab projects (2021 to 2025) were migrated to GitHub with full history and count there.</text>
+<text x="34" y="698" font-size="11" font-weight="400" text-anchor="start" fill="#9198a1">2020: commits in repositories moved from an earlier GitHub account. Personal GitLab projects were migrated to GitHub with full history and count there.</text>
 </svg>

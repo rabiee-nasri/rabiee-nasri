@@ -28,6 +28,7 @@ jobs:
       - run: python scripts/contributions.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"

@@ -1,0 +1,27 @@
+{
+  "updated": "2026-09-05",
+  "window": [
+    "2025-08-31",
+    "2026-09-05"
+  ],
+  "accounts": [
+    {
+      "label": "GitHub",
+      "login": "rabiee-nasri",
+      "last_year": 461,
+      "since": "486 since 2021"
+    },
+    {
+      "label": "GitHub",
+      "login": "RabieeNasri",
+      "last_year": 799,
+      "since": "866 since 2025"
+    },
+    {
+      "label": "GitLab",
+      "login": "rabiee-nasri",
+      "last_year": 0,
+      "since": "public calendar covers the last twelve months only"
+    }
+  ]
+}

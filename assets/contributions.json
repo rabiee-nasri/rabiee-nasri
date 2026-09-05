@@ -1,36 +1,10 @@
 {
   "updated": "2026-09-05",
-  "window": [
-    "2025-08-31",
-    "2026-09-05"
-  ],
+  "gitlab_private_included": false,
   "accounts": [
-    {
-      "label": "GitHub",
-      "login": "rabiee-nasri",
-      "last_year": 467,
-      "by_year": {
-        "2021": 2,
-        "2022": 0,
-        "2023": 1,
-        "2024": 21,
-        "2025": 5,
-        "2026": 463
-      }
-    },
-    {
-      "label": "GitHub",
-      "login": "RabieeNasri",
-      "last_year": 799,
-      "by_year": {
-        "2025": 202,
-        "2026": 664
-      }
-    },
     {
       "label": "GitLab",
       "login": "rabiee-nasri",
-      "last_year": 74,
       "by_year": {
         "2021": 16,
         "2022": 110,
@@ -43,13 +17,29 @@
     {
       "label": "GitHub",
       "login": "Mohammad-Nasri-Developer",
-      "last_year": null,
       "by_year": {
         "2022": 45,
         "2023": 152,
-        "2024": 99,
-        "2025": 0,
-        "2026": 0
+        "2024": 99
+      }
+    },
+    {
+      "label": "GitHub",
+      "login": "RabieeNasri",
+      "by_year": {
+        "2026": 664,
+        "2025": 202
+      }
+    },
+    {
+      "label": "GitHub",
+      "login": "rabiee-nasri",
+      "by_year": {
+        "2026": 464,
+        "2021": 2,
+        "2023": 1,
+        "2024": 21,
+        "2025": 5
       }
     }
   ]
